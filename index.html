@@ -1,0 +1,2476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="robots" content="noindex, nofollow">
+<title>3LG Home Office</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & ROOT ── */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+:root {
+  --bg:       #0A0A0A;
+  --bg2:      #111111;
+  --bg3:      #141414;
+  --bg4:      #1a1a1a;
+  --border:   #1F1F1F;
+  --border2:  rgba(255,255,255,.06);
+  --green:    #00A550;
+  --green-dim:rgba(0,165,80,.1);
+  --green-glow:rgba(0,165,80,.35);
+  --red:      #CC0000;
+  --text:     #E0E0E0;
+  --muted:    #888888;
+  --dim:      #444444;
+  --hf: 'Bebas Neue', sans-serif;
+  --bf: 'DM Sans', sans-serif;
+  --mf: 'DM Mono', monospace;
+  --sf: 'Lora', serif;
+  --sidebar-w: 240px;
+  --topbar-h:  48px;
+  --toolbar-h: 44px;
+}
+html, body {
+  background: var(--bg) !important;
+  color: var(--text) !important;
+  font-family: var(--bf) !important;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ── APP SHELL ── */
+#app { display:flex; flex-direction:column; height:100vh; overflow:hidden; }
+
+/* ── TOP NAV ── */
+#topnav {
+  height: var(--topbar-h);
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 16px;
+  flex-shrink: 0;
+  z-index: 200;
+}
+.nav-logo {
+  font-family: var(--hf);
+  font-size: 18px;
+  letter-spacing: 3px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+.nav-logo .r { color: var(--red); }
+.nav-logo .g { color: var(--green); }
+.live-dot {
+  width: 6px; height: 6px;
+  background: var(--green);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--green-glow);
+  animation: pulse 2s infinite;
+  flex-shrink: 0;
+}
+@keyframes pulse {
+  0%,100% { box-shadow: 0 0 6px var(--green-glow); }
+  50%      { box-shadow: 0 0 14px var(--green-glow); }
+}
+.nav-tagline {
+  font-family: var(--mf);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.nav-right { margin-left: auto; display:flex; align-items:center; gap:10px; }
+#saveStatus {
+  font-family: var(--mf);
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  padding: 3px 8px;
+  border-radius: 3px;
+  background: var(--green-dim);
+  color: var(--green);
+  border: 1px solid rgba(0,165,80,.25);
+  text-transform: uppercase;
+  transition: all .3s;
+}
+#saveStatus.saving { background:rgba(255,165,0,.1); color:orange; border-color:rgba(255,165,0,.3); }
+#saveStatus.err    { background:rgba(204,0,0,.1); color:var(--red); border-color:rgba(204,0,0,.3); }
+
+/* ── BODY ROW ── */
+#body-row {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ── SIDEBAR ── */
+#sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.sb-section-label {
+  font-family: var(--mf);
+  font-size: 7px;
+  letter-spacing: 2.5px;
+  color: var(--dim);
+  text-transform: uppercase;
+  padding: 12px 14px 6px;
+}
+.sb-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: all .15s;
+  user-select: none;
+}
+.sb-btn:hover { background: rgba(255,255,255,.03); }
+.sb-btn.active {
+  border-left-color: var(--green);
+  background: var(--green-dim);
+}
+.sb-btn.active .sb-label { color: var(--green); }
+.sb-icon { font-size: 14px; flex-shrink:0; }
+.sb-label {
+  font-family: var(--mf);
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--muted);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.sb-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 8px 0;
+}
+.sb-scroll { flex:1; overflow-y:auto; }
+.sb-scroll::-webkit-scrollbar { width:3px; }
+.sb-scroll::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+.sb-sys-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  cursor: default;
+  opacity: .45;
+}
+.sb-sys-item:hover { opacity: .65; }
+.sb-sys-icon { font-size: 11px; }
+.sb-sys-label {
+  font-family: var(--mf);
+  font-size: 8px;
+  letter-spacing: .5px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* ── MAIN AREA ── */
+#main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+/* ── TOOLBAR ── */
+#toolbar {
+  height: var(--toolbar-h);
+  background: var(--bg3);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 8px;
+  flex-shrink: 0;
+}
+#toolbar-title {
+  font-family: var(--hf);
+  font-size: 14px;
+  letter-spacing: 2px;
+  color: var(--text);
+}
+.tb-sep { width:1px; height:20px; background:var(--border); margin:0 4px; }
+.tb-btn {
+  font-family: var(--mf);
+  font-size: 8px;
+  letter-spacing: 1px;
+  padding: 5px 10px;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.tb-btn:hover { border-color: var(--green); color: var(--green); }
+.tb-btn.active { background: var(--green-dim); border-color: rgba(0,165,80,.4); color: var(--green); }
+#renderer-badge {
+  margin-left: auto;
+  font-family: var(--mf);
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  padding: 4px 10px;
+  border-radius: 3px;
+  border: 1px solid rgba(0,165,80,.4);
+  background: var(--green-dim);
+  color: var(--green);
+  text-transform: uppercase;
+}
+
+/* ── WORKSPACE PANELS ── */
+#workspace {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+.ws-panel { display:none; width:100%; height:100%; }
+.ws-panel.on { display:flex; }
+
+/* ── DOC SUITE — GOOGLE DOCS LAYOUT ── */
+#panel-docs {
+  flex-direction: row;
+}
+
+/* Left input column */
+#input-col {
+  width: 320px;
+  flex-shrink: 0;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.input-header {
+  padding: 10px 14px 8px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.input-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.input-label {
+  font-family: var(--mf);
+  font-size: 8px;
+  letter-spacing: 2px;
+  color: var(--green);
+  text-transform: uppercase;
+}
+.input-hint {
+  font-family: var(--mf);
+  font-size: 7px;
+  letter-spacing: 1px;
+  color: var(--dim);
+}
+/* Input mode tabs */
+.input-tabs { display:flex; gap:4px; }
+.itab {
+  font-family: var(--mf);
+  font-size: 8px;
+  letter-spacing: 1px;
+  padding: 4px 10px;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all .15s;
+  background: transparent;
+}
+.itab:hover { color: var(--text); }
+.itab.on {
+  color: var(--green);
+  border-color: rgba(0,165,80,.4);
+  background: var(--green-dim);
+}
+
+/* Conversation history */
+#conv-history {
+  flex: 0 0 auto;
+  max-height: 180px;
+  overflow-y: auto;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+#conv-history:empty { display:none; }
+#conv-history::-webkit-scrollbar { width:3px; }
+#conv-history::-webkit-scrollbar-thumb { background:var(--border); }
+.msg-user {
+  align-self: flex-end;
+  background: var(--green);
+  color: #000;
+  font-size: 11px;
+  padding: 6px 10px;
+  border-radius: 10px 10px 2px 10px;
+  max-width: 90%;
+  word-break: break-word;
+  font-family: var(--bf);
+}
+.msg-ai {
+  align-self: flex-start;
+  background: var(--bg3);
+  color: var(--text);
+  font-size: 11px;
+  padding: 6px 10px;
+  border-radius: 10px 10px 10px 2px;
+  max-width: 90%;
+  word-break: break-word;
+  font-family: var(--bf);
+  border: 1px solid var(--border);
+}
+
+/* Input body tabs */
+.input-body { flex:1; overflow:hidden; position:relative; }
+.itab-body { display:none; height:100%; flex-direction:column; }
+.itab-body.on { display:flex; }
+
+/* TYPE tab */
+#type-area {
+  flex: 1;
+  background: var(--bg2);
+  border: none;
+  outline: none;
+  color: var(--text) !important;
+  font-family: var(--bf) !important;
+  font-size: 13px;
+  line-height: 1.7;
+  padding: 14px;
+  resize: none;
+  width: 100%;
+  -webkit-user-select: text;
+  user-select: text;
+  pointer-events: auto;
+  position: relative;
+  z-index: 1;
+}
+#type-area::placeholder { color: var(--dim); font-size: 12px; }
+#type-area:focus { outline: none; }
+
+.input-actions {
+  padding: 8px 12px;
+  background: var(--bg3);
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-shrink: 0;
+}
+.input-actions input {
+  flex: 1;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 5px 8px;
+  font-family: var(--bf);
+  font-size: 11px;
+  color: var(--text) !important;
+  outline: none;
+  -webkit-user-select: text;
+  user-select: text;
+  pointer-events: auto;
+}
+.input-actions input:focus { border-color: var(--green); }
+.input-actions input::placeholder { color: var(--dim); }
+.gen-btn {
+  background: var(--green);
+  color: #000;
+  border: none;
+  border-radius: 3px;
+  padding: 7px 16px;
+  font-family: var(--mf);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  cursor: pointer;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: opacity .15s;
+}
+.gen-btn:disabled { opacity: .4; cursor: not-allowed; }
+
+/* SPEAK tab */
+#speak-body {
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 20px;
+}
+#transcript-display {
+  width: 100%;
+  min-height: 60px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 12px;
+  color: var(--text);
+  font-family: var(--bf);
+  text-align: center;
+  font-style: italic;
+  color: var(--muted);
+}
+#mic-btn {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  background: var(--bg3);
+  border: 2px solid var(--border);
+  font-size: 28px;
+  cursor: pointer;
+  transition: all .2s;
+  display: flex; align-items:center; justify-content:center;
+}
+#mic-btn.listening {
+  border-color: var(--green);
+  background: var(--green-dim);
+  box-shadow: 0 0 20px var(--green-glow);
+  animation: mic-pulse 1s infinite;
+}
+@keyframes mic-pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+#speak-send {
+  background: var(--green);
+  color: #000;
+  border: none;
+  border-radius: 3px;
+  padding: 8px 20px;
+  font-family: var(--mf);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+.speak-hint {
+  font-family: var(--mf);
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: var(--dim);
+  text-align: center;
+}
+
+/* UPLOAD tab */
+#upload-body { padding: 16px; }
+#drop-zone {
+  border: 2px dashed var(--border);
+  border-radius: 8px;
+  padding: 30px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all .2s;
+}
+#drop-zone:hover, #drop-zone.over {
+  border-color: var(--green);
+  background: var(--green-dim);
+}
+.dz-icon { font-size: 28px; margin-bottom: 8px; }
+.dz-text { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.dz-text strong { color: var(--text); display:block; margin-bottom:4px; }
+#upload-chip {
+  margin-top: 10px;
+  display: none;
+  background: var(--bg3);
+  border: 1px solid var(--green);
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-family: var(--mf);
+  font-size: 9px;
+  color: var(--green);
+}
+
+/* Right output column — Google Docs canvas */
+#output-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #e8e8e8;
+}
+/* Edit toolbar */
+#edit-toolbar {
+  display: none;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 12px;
+  background: #f5f5f5;
+  border-bottom: 1px solid #ddd;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+#edit-toolbar.on { display:flex; }
+.fmt-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  padding: 3px 6px;
+  font-size: 11px;
+  cursor: pointer;
+  color: #333;
+  transition: all .1s;
+  white-space: nowrap;
+}
+.fmt-btn:hover { background: #e0e0e0; border-color: #ccc; }
+.fmt-sep { width:1px; height:16px; background:#ddd; margin:0 3px; }
+
+/* Document canvas */
+#doc-canvas-wrap {
+  flex: 1;
+  overflow-y: auto;
+  padding: 32px 24px;
+  background: #e8e8e8;
+}
+#doc-canvas-wrap::-webkit-scrollbar { width:8px; }
+#doc-canvas-wrap::-webkit-scrollbar-track { background:#e8e8e8; }
+#doc-canvas-wrap::-webkit-scrollbar-thumb { background:#bbb; border-radius:4px; }
+
+#doc-canvas {
+  background: #ffffff;
+  min-height: calc(100vh - 200px);
+  max-width: 816px;
+  margin: 0 auto;
+  padding: 72px 80px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.2), 0 4px 16px rgba(0,0,0,.1);
+  font-family: var(--sf);
+  font-size: 15px;
+  line-height: 1.7;
+  color: #111111;
+  outline: none;
+  position: relative;
+}
+#doc-canvas[contenteditable="true"] { cursor: text; }
+#doc-canvas[contenteditable="false"] { cursor: default; }
+
+/* Doc canvas typography */
+#doc-canvas h1 {
+  font-family: var(--hf);
+  font-size: 32px;
+  letter-spacing: 2px;
+  border-bottom: 3px solid var(--red);
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+  color: #0A0A0A;
+}
+#doc-canvas h2 {
+  font-family: var(--hf);
+  font-size: 22px;
+  letter-spacing: 1.5px;
+  color: var(--green);
+  margin: 24px 0 8px;
+}
+#doc-canvas h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 18px 0 6px;
+  color: #1a1a1a;
+}
+#doc-canvas p { margin-bottom: 12px; }
+#doc-canvas ul, #doc-canvas ol { margin: 0 0 12px 24px; }
+#doc-canvas li { margin-bottom: 4px; }
+#doc-canvas table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 18px;
+  font-size: 13px;
+}
+#doc-canvas th {
+  background: #0A0A0A;
+  color: #fff;
+  padding: 8px 12px;
+  text-align: left;
+  font-family: var(--mf);
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+#doc-canvas td {
+  border: 1px solid #e0e0e0;
+  padding: 8px 12px;
+}
+#doc-canvas tr:nth-child(even) td { background: #f9f9f9; }
+.highlight-box {
+  background: rgba(0,165,80,.06);
+  border-left: 4px solid var(--green);
+  padding: 14px 18px;
+  border-radius: 0 6px 6px 0;
+  margin: 14px 0;
+}
+
+/* Doc empty state */
+#doc-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 12px;
+  opacity: .35;
+  pointer-events: none;
+}
+#doc-empty.hidden { display:none; }
+.empty-icon { font-size: 48px; }
+.empty-title {
+  font-family: var(--hf);
+  font-size: 22px;
+  letter-spacing: 3px;
+  color: #555;
+}
+.empty-sub {
+  font-family: var(--mf);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: #aaa;
+  text-align: center;
+}
+
+/* ── FOLDER PANELS ── */
+.folder-panel {
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg);
+}
+.folder-header {
+  padding: 20px 28px 16px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.folder-title {
+  font-family: var(--hf);
+  font-size: 28px;
+  letter-spacing: 3px;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+.folder-sub {
+  font-family: var(--mf);
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+}
+.folder-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 28px;
+}
+.folder-body::-webkit-scrollbar { width:6px; }
+.folder-body::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+
+/* ── FUNDING CENTER ── */
+.funding-master-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.fmc-stat { text-align:center; }
+.fmc-num {
+  font-family: var(--hf);
+  font-size: 28px;
+  letter-spacing: 2px;
+  color: var(--green);
+}
+.fmc-lbl {
+  font-family: var(--mf);
+  font-size: 7px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.fmc-btn {
+  margin-left: auto;
+  background: var(--green);
+  color: #000;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-family: var(--mf);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+.funding-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+@media(max-width:900px) { .funding-grid { grid-template-columns: 1fr 1fr; } }
+.fc-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: all .15s;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.fc-card:hover { border-color: var(--green); transform: translateY(-1px); }
+.fc-amount {
+  font-family: var(--hf);
+  font-size: 18px;
+  letter-spacing: 1px;
+  color: var(--green);
+}
+.fc-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.3;
+}
+.fc-status {
+  font-family: var(--mf);
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: var(--muted);
+}
+.fc-desc {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+.fc-cta {
+  margin-top: auto;
+  font-family: var(--mf);
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: var(--green);
+  text-transform: uppercase;
+}
+
+/* Funding detail slide-in */
+#funding-detail {
+  position: absolute;
+  top: 0; right: -100%;
+  width: 420px;
+  height: 100%;
+  background: var(--bg2);
+  border-left: 1px solid var(--border);
+  z-index: 100;
+  transition: right .3s ease;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+#funding-detail.open { right: 0; }
+.fd-header {
+  padding: 20px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.fd-name {
+  font-family: var(--hf);
+  font-size: 24px;
+  letter-spacing: 2px;
+  color: var(--green);
+  line-height: 1.1;
+}
+.fd-close {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 18px;
+  cursor: pointer;
+  padding: 2px 6px;
+}
+.fd-close:hover { color: var(--text); }
+.fd-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px;
+}
+.fd-body::-webkit-scrollbar { width:4px; }
+.fd-body::-webkit-scrollbar-thumb { background:var(--border); }
+.fd-badge {
+  display: inline-block;
+  font-family: var(--mf);
+  font-size: 8px;
+  letter-spacing: 1px;
+  padding: 3px 8px;
+  border-radius: 3px;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+.fd-badge.amount { background: var(--green-dim); color: var(--green); border: 1px solid rgba(0,165,80,.3); }
+.fd-badge.status { background: rgba(255,165,0,.1); color: orange; border: 1px solid rgba(255,165,0,.3); margin-left: 6px; }
+.fd-section {
+  font-family: var(--mf);
+  font-size: 8px;
+  letter-spacing: 2px;
+  color: var(--green);
+  text-transform: uppercase;
+  margin: 14px 0 6px;
+}
+.fd-text { font-size: 12px; color: var(--text); line-height: 1.6; margin-bottom: 8px; }
+.fd-list { font-size: 12px; color: var(--text); line-height: 1.6; padding-left: 16px; margin-bottom: 8px; }
+.fd-list li { margin-bottom: 3px; }
+.fd-check-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.fd-check-item input[type="checkbox"] { accent-color: var(--green); width:14px; height:14px; cursor:pointer; }
+.fd-check-item label { font-size: 12px; color: var(--text); cursor:pointer; }
+.fd-draft-btn {
+  width: 100%;
+  background: var(--green);
+  color: #000;
+  border: none;
+  border-radius: 4px;
+  padding: 10px;
+  font-family: var(--mf);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  text-transform: uppercase;
+  margin-top: 16px;
+}
+
+/* ── REAL ESTATE ── */
+.re-block {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 18px 20px;
+  margin-bottom: 16px;
+}
+.re-block-title {
+  font-family: var(--hf);
+  font-size: 16px;
+  letter-spacing: 2px;
+  color: var(--green);
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+}
+.re-model {
+  margin-bottom: 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+.re-model:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.re-model-name {
+  font-family: var(--mf);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--text);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.re-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+.re-tag {
+  font-family: var(--mf);
+  font-size: 8px;
+  letter-spacing: .5px;
+  padding: 2px 7px;
+  border-radius: 3px;
+  background: var(--bg4);
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+.re-tag.green { background: var(--green-dim); color: var(--green); border-color: rgba(0,165,80,.3); }
+.re-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media(max-width:700px) { .re-grid { grid-template-columns: 1fr; } }
+.re-card {
+  background: var(--bg4);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px;
+}
+.re-card-title {
+  font-family: var(--mf);
+  font-size: 8px;
+  letter-spacing: 2px;
+  color: var(--green);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.re-card-body { font-size: 12px; color: var(--text); line-height: 1.6; }
+.re-open-btn {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  background: var(--green);
+  color: #000;
+  border: none;
+  border-radius: 4px;
+  padding: 10px;
+  font-family: var(--mf);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+/* ── CONTRACT LIBRARY ── */
+.cl-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+}
+.cl-tile {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 18px 20px;
+  cursor: pointer;
+  transition: all .15s;
+}
+.cl-tile:hover { border-color: var(--green); }
+.cl-tier {
+  font-family: var(--mf);
+  font-size: 7px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.cl-name {
+  font-family: var(--hf);
+  font-size: 18px;
+  letter-spacing: 1.5px;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.cl-price {
+  font-family: var(--mf);
+  font-size: 10px;
+  color: var(--green);
+  margin-bottom: 10px;
+}
+.cl-open {
+  font-family: var(--mf);
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: var(--green);
+  text-transform: uppercase;
+}
+
+/* ── BUSINESS PLAN BUILDER ── */
+#panel-bizplan {
+  flex-direction: column;
+  background: var(--bg);
+}
+.bp-header {
+  padding: 20px 28px 14px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.bp-title {
+  font-family: var(--hf);
+  font-size: 28px;
+  letter-spacing: 3px;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+.bp-sub {
+  font-family: var(--mf);
+  font-size: 8px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+#bp-chat {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+#bp-chat::-webkit-scrollbar { width:6px; }
+#bp-chat::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+.bp-msg-ai {
+  align-self: flex-start;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 10px 10px 10px 2px;
+  padding: 12px 16px;
+  max-width: 75%;
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.6;
+}
+.bp-msg-user {
+  align-self: flex-end;
+  background: var(--green);
+  color: #000;
+  border-radius: 10px 10px 2px 10px;
+  padding: 10px 14px;
+  max-width: 75%;
+  font-size: 13px;
+  line-height: 1.6;
+}
+#bp-input-row {
+  padding: 14px 28px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  flex-shrink: 0;
+  background: var(--bg2);
+}
+#bp-textarea {
+  flex: 1;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-family: var(--bf);
+  font-size: 13px;
+  color: var(--text) !important;
+  outline: none;
+  resize: none;
+  min-height: 44px;
+  max-height: 120px;
+  line-height: 1.5;
+  -webkit-user-select: text;
+  user-select: text;
+  pointer-events: auto;
+}
+#bp-textarea:focus { border-color: var(--green); }
+#bp-textarea::placeholder { color: var(--dim); }
+#bp-send {
+  background: var(--green);
+  color: #000;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 18px;
+  font-family: var(--mf);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  cursor: pointer;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+#bp-send:disabled { opacity:.4; cursor:not-allowed; }
+
+/* ── AMBIENT VIDEO STRIP ── */
+#video-strip {
+  height: 180px;
+  flex-shrink: 0;
+  background: #000;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+}
+#yt-frame { flex:1; position:relative; overflow:hidden; }
+#yt-frame iframe { position:absolute; inset:0; width:100%; height:100%; border:none; }
+#vid-controls {
+  background: rgba(8,8,8,.95);
+  border-top: 1px solid var(--border);
+  padding: 5px 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.ch-lbl {
+  font-family: var(--mf);
+  font-size: 7px;
+  letter-spacing: 2px;
+  color: var(--dim);
+  text-transform: uppercase;
+}
+.vid-btn {
+  font-family: var(--mf);
+  font-size: 7px;
+  letter-spacing: .5px;
+  padding: 3px 8px;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.vid-btn:hover { border-color: var(--green); color: var(--green); }
+.vid-btn.on { background: var(--green-dim); border-color: rgba(0,165,80,.4); color: var(--green); }
+#vid-url-input {
+  flex: 1;
+  min-width: 100px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 3px 7px;
+  font-family: var(--mf);
+  font-size: 8px;
+  color: var(--text) !important;
+  outline: none;
+  -webkit-user-select: text;
+  user-select: text;
+  pointer-events: auto;
+}
+#vid-url-input:focus { border-color: var(--green); }
+#vid-url-input::placeholder { color: var(--dim); }
+#vid-go {
+  background: var(--green);
+  color: #000;
+  border: none;
+  border-radius: 3px;
+  padding: 3px 10px;
+  font-family: var(--mf);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+
+/* ── TOAST ── */
+#toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--bg3);
+  border: 1px solid var(--green);
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-family: var(--mf);
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--green);
+  z-index: 9999;
+  transform: translateY(60px);
+  opacity: 0;
+  transition: all .3s;
+  box-shadow: 0 4px 20px rgba(0,0,0,.5);
+  pointer-events: none;
+}
+#toast.show { transform: none; opacity: 1; }
+#toast.err { border-color: var(--red); color: var(--red); }
+
+/* ── MOBILE ── */
+@media(max-width:768px) {
+  #sidebar { display:none; }
+  #input-col { width: 100%; border-right: none; border-bottom: 1px solid var(--border); max-height: 45vh; }
+  #panel-docs { flex-direction: column; }
+  #output-col { min-height: 50vh; }
+  #doc-canvas { padding: 32px 20px; }
+  #video-strip { height: 140px; }
+  .funding-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- TOP NAV -->
+  <nav id="topnav">
+    <div class="live-dot"></div>
+    <div class="nav-logo"><span class="r">3LG</span>&nbsp;HOME&nbsp;<span class="g">OFFICE</span></div>
+    <div class="nav-tagline">Strike once — then speak.</div>
+    <div class="nav-right">
+      <span id="saveStatus">READY</span>
+    </div>
+  </nav>
+
+  <!-- BODY ROW -->
+  <div id="body-row">
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar">
+      <div class="sb-section-label">Document Suite</div>
+
+      <div class="sb-btn active" id="sb-docs" onclick="activateRenderer('docs',this)">
+        <span class="sb-icon">📄</span><span class="sb-label">3LG Docs</span>
+      </div>
+      <div class="sb-btn" id="sb-contracts" onclick="activateRenderer('contracts',this)">
+        <span class="sb-icon">📝</span><span class="sb-label">Contracts</span>
+      </div>
+      <div class="sb-btn" id="sb-notes" onclick="activateRenderer('notes',this)">
+        <span class="sb-icon">🗒</span><span class="sb-label">Notes</span>
+      </div>
+      <div class="sb-btn" id="sb-sheets" onclick="activateRenderer('sheets',this)">
+        <span class="sb-icon">📊</span><span class="sb-label">Sheets</span>
+      </div>
+      <div class="sb-btn" id="sb-slides" onclick="activateRenderer('slides',this)">
+        <span class="sb-icon">📽</span><span class="sb-label">Slides</span>
+      </div>
+      <div class="sb-btn" id="sb-plan" onclick="activateRenderer('plan',this)">
+        <span class="sb-icon">🏗</span><span class="sb-label">Plan Builder</span>
+      </div>
+
+      <div class="sb-divider"></div>
+      <div class="sb-section-label">Personal Folders</div>
+
+      <div class="sb-btn" id="sb-funding" onclick="openFolder('funding',this)">
+        <span class="sb-icon">💰</span><span class="sb-label">Funding Center</span>
+      </div>
+      <div class="sb-btn" id="sb-realestate" onclick="openFolder('realestate',this)">
+        <span class="sb-icon">🏠</span><span class="sb-label">Real Estate</span>
+      </div>
+      <div class="sb-btn" id="sb-contractlib" onclick="openFolder('contractlib',this)">
+        <span class="sb-icon">📑</span><span class="sb-label">Contract Library</span>
+      </div>
+      <div class="sb-btn" id="sb-bizplan" onclick="openFolder('bizplan',this)">
+        <span class="sb-icon">📋</span><span class="sb-label">Business Plan Builder</span>
+      </div>
+
+      <div class="sb-divider"></div>
+      <div class="sb-section-label">BMS Systems</div>
+
+      <div class="sb-scroll">
+        <div class="sb-sys-item"><span class="sb-sys-icon">🤖</span><span class="sb-sys-label">Front Desk AI</span></div>
+        <div class="sb-sys-item"><span class="sb-sys-icon">👥</span><span class="sb-sys-label">CRM</span></div>
+        <div class="sb-sys-item"><span class="sb-sys-icon">📧</span><span class="sb-sys-label">Email Marketing</span></div>
+        <div class="sb-sys-item"><span class="sb-sys-icon">💬</span><span class="sb-sys-label">SMS Marketing</span></div>
+        <div class="sb-sys-item"><span class="sb-sys-icon">⭐</span><span class="sb-sys-label">Reputation</span></div>
+        <div class="sb-sys-item"><span class="sb-sys-icon">📱</span><span class="sb-sys-label">Social Media</span></div>
+        <div class="sb-sys-item"><span class="sb-sys-icon">🌐</span><span class="sb-sys-label">Website / Funnel</span></div>
+        <div class="sb-sys-item"><span class="sb-sys-icon">🔍</span><span class="sb-sys-label">SEO / AEO</span></div>
+        <div class="sb-sys-item"><span class="sb-sys-icon">📅</span><span class="sb-sys-label">Booking</span></div>
+        <div class="sb-sys-item"><span class="sb-sys-icon">🎬</span><span class="sb-sys-label">Video Marketing</span></div>
+        <div class="sb-sys-item"><span class="sb-sys-icon">📊</span><span class="sb-sys-label">Analytics</span></div>
+        <div class="sb-sys-item"><span class="sb-sys-icon">💳</span><span class="sb-sys-label">Payments</span></div>
+        <div class="sb-sys-item"><span class="sb-sys-icon">📞</span><span class="sb-sys-label">Missed Call / Text Back</span></div>
+        <div class="sb-sys-item"><span class="sb-sys-icon">📨</span><span class="sb-sys-label">Lead Capture</span></div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div id="main">
+
+      <!-- TOOLBAR -->
+      <div id="toolbar">
+        <span id="toolbar-title">Document Creation Suite</span>
+        <div class="tb-sep"></div>
+        <button class="tb-btn" onclick="clearDoc()">✕ CLEAR</button>
+        <button class="tb-btn" onclick="copyDoc()">⎘ COPY</button>
+        <button class="tb-btn" onclick="exportDoc()">↗ EXPORT</button>
+        <button class="tb-btn" id="edit-btn" onclick="toggleEdit()">✏ EDIT</button>
+        <span id="renderer-badge">3LG DOCS</span>
+      </div>
+
+      <!-- WORKSPACE -->
+      <div id="workspace">
+
+        <!-- DOC SUITE PANEL -->
+        <div class="ws-panel on" id="panel-docs">
+
+          <!-- INPUT COLUMN -->
+          <div id="input-col">
+            <div class="input-header">
+              <div class="input-header-top">
+                <span class="input-label">Input Engine</span>
+                <span class="input-hint">Type · Talk · Upload</span>
+              </div>
+              <div class="input-tabs">
+                <button class="itab on" id="itab-type" onclick="switchInputTab('type')">⌨ TYPE</button>
+                <button class="itab" id="itab-speak" onclick="switchInputTab('speak')">🎤 SPEAK</button>
+                <button class="itab" id="itab-upload" onclick="switchInputTab('upload')">📎 UPLOAD</button>
+              </div>
+            </div>
+
+            <div id="conv-history"></div>
+
+            <div class="input-body">
+              <!-- TYPE TAB -->
+              <div class="itab-body on" id="body-type">
+                <textarea id="type-area" placeholder="Describe what you need...
+
+Examples:
+• Service agreement for an HVAC contractor — $3,500 scope, Birmingham AL
+• Business plan for a Black-owned restaurant, 90-day launch
+• Proposal for a $75K digital marketing retainer
+• Sales script for home services cold outreach
+• Loan proposal for a $250K commercial buildout
+
+More detail = better output. Ctrl + Enter to generate."></textarea>
+              </div>
+
+              <!-- SPEAK TAB -->
+              <div class="itab-body" id="body-speak">
+                <div id="speak-body">
+                  <div id="transcript-display">Tap the mic and start speaking...</div>
+                  <button id="mic-btn" onclick="toggleMic()">🎤</button>
+                  <button id="speak-send" onclick="sendSpeak()">SEND</button>
+                  <div class="speak-hint" id="speak-hint">Chrome or Edge required for voice input</div>
+                </div>
+              </div>
+
+              <!-- UPLOAD TAB -->
+              <div class="itab-body" id="body-upload">
+                <div id="upload-body">
+                  <div id="drop-zone" onclick="document.getElementById('file-input').click()"
+                       ondragover="event.preventDefault();this.classList.add('over')"
+                       ondragleave="this.classList.remove('over')"
+                       ondrop="handleDrop(event)">
+                    <div class="dz-icon">📁</div>
+                    <div class="dz-text">
+                      <strong>Drop a file or click to browse</strong>
+                      PDF, DOCX, XLSX, PNG, JPG accepted
+                    </div>
+                  </div>
+                  <div id="upload-chip"></div>
+                  <input type="file" id="file-input" style="display:none" accept=".pdf,.doc,.docx,.xlsx,.png,.jpg,.jpeg,.txt" onchange="handleFileSelect(event)">
+                </div>
+              </div>
+            </div>
+
+            <!-- CONTRACT TEMPLATES (only visible on contracts renderer) -->
+            <div id="contract-templates" style="display:none; border-top:1px solid var(--border); overflow-y:auto; max-height:220px;">
+              <div style="padding:8px 12px 4px; font-family:var(--mf); font-size:7px; letter-spacing:2px; color:var(--green); text-transform:uppercase;">Contract Templates</div>
+              <div id="ct-list"></div>
+            </div>
+
+            <div class="input-actions">
+              <input type="text" id="extra-input" placeholder="Extra instruction (optional)..." onkeydown="if(event.key==='Enter')generate()">
+              <button class="gen-btn" id="gen-btn" onclick="generate()">GENERATE</button>
+            </div>
+          </div>
+
+          <!-- OUTPUT COLUMN -->
+          <div id="output-col">
+            <!-- Edit toolbar -->
+            <div id="edit-toolbar">
+              <button class="fmt-btn" onclick="fmt('bold')"><b>B</b></button>
+              <button class="fmt-btn" onclick="fmt('italic')"><i>I</i></button>
+              <button class="fmt-btn" onclick="fmt('underline')"><u>U</u></button>
+              <div class="fmt-sep"></div>
+              <button class="fmt-btn" onclick="fmtBlock('h1')">H1</button>
+              <button class="fmt-btn" onclick="fmtBlock('h2')">H2</button>
+              <button class="fmt-btn" onclick="fmtBlock('h3')">H3</button>
+              <button class="fmt-btn" onclick="fmtBlock('p')">¶</button>
+              <div class="fmt-sep"></div>
+              <button class="fmt-btn" onclick="fmt('justifyLeft')">⬅</button>
+              <button class="fmt-btn" onclick="fmt('justifyCenter')">≡</button>
+              <button class="fmt-btn" onclick="fmt('justifyRight')">➡</button>
+              <div class="fmt-sep"></div>
+              <button class="fmt-btn" onclick="fmt('insertUnorderedList')">• List</button>
+              <button class="fmt-btn" onclick="fmt('insertOrderedList')">1. List</button>
+              <div class="fmt-sep"></div>
+              <button class="fmt-btn" onclick="fmt('undo')">↩ Undo</button>
+              <button class="fmt-btn" onclick="fmt('redo')">↪ Redo</button>
+            </div>
+
+            <div id="doc-canvas-wrap">
+              <div id="doc-canvas" contenteditable="false" spellcheck="true">
+                <div id="doc-empty">
+                  <div class="empty-icon">📄</div>
+                  <div class="empty-title">3LG HOME OFFICE</div>
+                  <div class="empty-sub">Type your request on the left, then hit GENERATE</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /panel-docs -->
+
+        <!-- FUNDING CENTER PANEL -->
+        <div class="ws-panel folder-panel" id="panel-funding">
+          <div class="folder-header">
+            <div class="folder-title">💰 FUNDING CENTER</div>
+            <div class="folder-sub">UP TO $475K TARGET · Black-owned tech startup · Alabama · Pre-revenue · 5 verticals actively building</div>
+          </div>
+          <div class="folder-body" style="position:relative; overflow:hidden;">
+            <!-- Master checklist card -->
+            <div class="funding-master-card">
+              <div class="fmc-stat"><div class="fmc-num">$475K+</div><div class="fmc-lbl">Total Target</div></div>
+              <div class="fmc-stat"><div class="fmc-num" id="apps-submitted">0</div><div class="fmc-lbl">Apps Submitted</div></div>
+              <div class="fmc-stat"><div class="fmc-num" id="next-deadline">May 15</div><div class="fmc-lbl">Next Deadline</div></div>
+              <button class="fmc-btn" onclick="openMasterStrategy()">Open Master Strategy in Notebook</button>
+            </div>
+            <!-- Funding grid -->
+            <div class="funding-grid" id="funding-grid"></div>
+            <!-- Detail panel -->
+            <div id="funding-detail">
+              <div class="fd-header">
+                <div class="fd-name" id="fd-name">—</div>
+                <button class="fd-close" onclick="closeFundingDetail()">✕</button>
+              </div>
+              <div class="fd-body" id="fd-body"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- REAL ESTATE PANEL -->
+        <div class="ws-panel folder-panel" id="panel-realestate">
+          <div class="folder-header">
+            <div class="folder-title">🏠 REAL ESTATE STRATEGY</div>
+            <div class="folder-sub">HUEYTOWN, AL · 35023 / 35020 · West Rock Mountain catalyst · UAB Medical West catalyst · Aggressive Buyer's Market</div>
+          </div>
+          <div class="folder-body" id="re-body"></div>
+        </div>
+
+        <!-- CONTRACT LIBRARY PANEL -->
+        <div class="ws-panel folder-panel" id="panel-contractlib">
+          <div class="folder-header">
+            <div class="folder-title">📑 CONTRACT LIBRARY</div>
+            <div class="folder-sub">7 templates · Click any tile to open in Contracts renderer</div>
+          </div>
+          <div class="folder-body">
+            <div class="cl-grid" id="cl-grid"></div>
+          </div>
+        </div>
+
+        <!-- BUSINESS PLAN BUILDER PANEL -->
+        <div class="ws-panel" id="panel-bizplan" style="flex-direction:column; background:var(--bg);">
+          <div class="bp-header">
+            <div class="bp-title">📋 BUSINESS PLAN BUILDER</div>
+            <div class="bp-sub">Conversational · No question limit · Say "done" when finished</div>
+          </div>
+          <div id="bp-chat"></div>
+          <div id="bp-input-row">
+            <textarea id="bp-textarea" placeholder="Type your response..." rows="1"
+              onkeydown="if((event.ctrlKey||event.metaKey)&&event.key==='Enter'){event.preventDefault();bpSend();}"
+              oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"></textarea>
+            <button id="bp-send" onclick="bpSend()">SEND</button>
+          </div>
+        </div>
+
+      </div><!-- /workspace -->
+
+      <!-- AMBIENT VIDEO STRIP -->
+      <div id="video-strip">
+        <div id="yt-frame">
+          <iframe id="yt-player"
+            src="https://www.youtube.com/embed/L0emkyxTkLs?autoplay=1&mute=1&loop=1&playlist=L0emkyxTkLs&controls=0&showinfo=0&rel=0&modestbranding=1"
+            allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+        <div id="vid-controls">
+          <span class="ch-lbl">Ambient</span>
+          <button class="vid-btn on" onclick="switchChannel('nature',this)">Nature ASMR</button>
+          <button class="vid-btn" onclick="switchChannel('calm',this)">Calm Horizon</button>
+          <button class="vid-btn" onclick="switchChannel('none',this)">Mute</button>
+          <span class="ch-lbl" style="margin-left:4px">|</span>
+          <input id="vid-url-input" placeholder="Paste any YouTube URL..." onkeydown="if(event.key==='Enter')playCustom()">
+          <button id="vid-go" onclick="playCustom()">PLAY</button>
+        </div>
+      </div>
+
+    </div><!-- /main -->
+  </div><!-- /body-row -->
+</div><!-- /app -->
+
+<div id="toast"></div>
+
+<script>
+// ── API CONFIG ──
+// API key is NEVER in this file. Routed server-side via nginx proxy.
+// Basic auth header is required because nginx protects the entire domain.
+const AUTH_HEADER = 'Basic ' + btoa('office:Tubman1983!');
+const API_BASE    = '/api';
+const ANTHROPIC_MODEL     = 'claude-sonnet-4-20250514';
+const ANTHROPIC_MAX_TOKENS = 4096;
+const GAMMA_API_URL        = '__GAMMA_TRIGGER_PLACEHOLDER__';
+const AIRTABLE_PERSIST_URL = '__AIRTABLE_ENDPOINT_PLACEHOLDER__';
+
+// ── PERSISTENCE STUBS ──
+async function persistToAirtable(docId, content) {
+  // Wire when ready: POST to AIRTABLE_PERSIST_URL
+  // Body: { docId, content, updatedAt: Date.now(), userId: 'norman' }
+}
+
+// ── RENDERER SYSTEM PROMPTS ──
+const SYS = {
+  docs: `You are the 3LG Document AI for Coach Nick / Norman Walton, founder of 3 Levels of Game — a complete BMS platform serving 5 verticals (Home Services, Real Estate, Black-Owned Businesses, E-Commerce, Food & Water), Alabama-based, pre-revenue. Generate a professional business document in clean HTML. Use: h1 (with style="border-bottom:3px solid #CC0000;padding-bottom:10px;margin-bottom:20px;font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:2px"), h2 (style="color:#00A550;font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1.5px;margin:24px 0 8px"), h3, p, ul, ol, table (with styled thead: background:#0A0A0A;color:#fff), and highlight boxes: <div style="background:rgba(0,165,80,.06);border-left:4px solid #00A550;padding:14px 18px;border-radius:0 6px 6px 0;margin:14px 0">. Return ONLY the HTML, no markdown fences.`,
+
+  contracts: `You are the 3LG Contract AI for 3 Levels of Game. Signatory: Norman Walton, CEO & Co-Founder, 3 Levels of Game, Alabama. Generate a complete, legally-structured contract in HTML. Include: Parties section, Scope of Work, Payment Terms (with table), Deliverables, Timeline, Terms & Conditions, Termination Clause, Governing Law (Alabama), and Signature Block with lines for both parties. Use same HTML styling as docs renderer. Return ONLY the HTML.`,
+
+  notes: `You are the 3LG Notes AI. Generate clean, organized notes in HTML. Include: bold date/context header, Key Points section, Action Items (with colored bullet style="color:#00A550"), Follow-Ups, and any relevant decisions. Sharp and scannable. Return ONLY the HTML.`,
+
+  sheets: `You are the 3LG Sheets AI. Generate a structured data table in HTML. Style: thead with background:#0A0A0A;color:#fff, alternating row backgrounds, bold totals row. Add a summary section above the table. Return ONLY the HTML.`,
+
+  slides: `You are the 3LG Presentations AI. Generate a slide deck outline in HTML. Each slide as a card: style="border-left:4px solid #00A550;padding:16px;background:rgba(0,165,80,.04);margin:12px 0;border-radius:0 6px 6px 0". Bold slide title, bullet points. Include: Title slide, Agenda, 5–7 content slides, CTA slide. Return ONLY the HTML.`,
+
+  plan: `You are the 3LG Business Plan AI for Coach Nick / Norman Walton. Generate a complete investor-ready business plan in HTML. Sections: Executive Summary (with key metrics highlight box), Business Description, Market Analysis, Competitive Advantage, Revenue Model (table), Operations Plan, Marketing Strategy, Financial Projections Year 1–3 (table), Funding Ask, Next Steps. Return ONLY the HTML.`
+};
+
+const RENDERER_LABELS = {
+  docs:'3LG DOCS', contracts:'CONTRACTS', notes:'NOTES',
+  sheets:'SHEETS', slides:'SLIDES', plan:'PLAN BUILDER'
+};
+
+const RENDERER_PLACEHOLDERS = {
+  docs: `Describe what you need...
+
+Examples:
+• Service agreement for an HVAC contractor — $3,500 scope, Birmingham AL
+• Business plan for a Black-owned restaurant, 90-day launch
+• Proposal for a $75K digital marketing retainer
+• Sales script for home services cold outreach
+• Loan proposal for a $250K commercial buildout
+
+More detail = better output. Ctrl + Enter to generate.`,
+
+  contracts: `Describe the contract you need...
+
+Examples:
+• Service agreement for HVAC contractor, $3,500 scope, Birmingham AL
+• Monthly retainer agreement, digital marketing, $1,500/mo
+• NDA for a strategic partnership discussion
+• Independent contractor agreement, 6-month term
+
+Ctrl + Enter to generate.`,
+
+  notes: `What are these notes for?
+
+Examples:
+• Meeting notes — investor call, April 25, 2026
+• Strategy session recap — real estate acquisition plan
+• Action items from team standup
+
+Ctrl + Enter to generate.`,
+
+  sheets: `Describe the spreadsheet you need...
+
+Examples:
+• Revenue projection table, Year 1–3, 5 verticals
+• Rental property cash flow tracker, 3 properties
+• Grant application tracker, 10 sources
+
+Ctrl + Enter to generate.`,
+
+  slides: `Describe the presentation...
+
+Examples:
+• Investor pitch deck, 3LG platform overview, 10 slides
+• Real estate strategy presentation for private lender
+• Grant application overview for SBA SBIR
+
+Ctrl + Enter to generate.`,
+
+  plan: `Describe the business plan...
+
+Examples:
+• Complete business plan for 3LG Home Services vertical
+• Investor pitch plan for TERRA hardware product
+• Grant-ready plan for SBA SBIR Phase I application
+
+Ctrl + Enter to generate.`
+};
+
+// ── CONTRACT TEMPLATES ──
+const CONTRACT_TEMPLATES = [
+  { name:'Foundation Agreement',      tier:'Starter',         price:'$250/mo + $500 setup · 3-month minimum' },
+  { name:'Lay Up Drill Agreement',    tier:'Growth',          price:'$500/mo + $500 setup · 3-month minimum' },
+  { name:'Game Time Agreement',       tier:'Pro',             price:'$750/mo + $500 setup · 3-month minimum' },
+  { name:'Elite Agreement',           tier:'Elite',           price:'$1,000/mo + $500 setup · 3-month minimum' },
+  { name:'Founding Member Agreement', tier:'Founding Member', price:'$250/mo locked for life · First 100 clients' },
+  { name:'Agency Licensing Agreement',tier:'Agency',          price:'$2,500 certification + $1,500/mo' },
+  { name:'Non-Disclosure Agreement',  tier:'NDA',             price:'With explicit consent section' }
+];
+
+// ── FUNDING DATA ──
+const FUNDING_DATA = [
+  {
+    id:'fedex', name:'FedEx Small Business Grant', amount:'$15K–$50K', status:'Apply every cycle',
+    desc:'Annual recurring grant. Apply each cycle while pre-revenue.',
+    what:'Annual grant program from FedEx supporting small businesses across the US. Recurring — apply every cycle.',
+    looking:['Small business with growth potential','Clear business plan and use of funds','Community impact narrative'],
+    angle:'Lead with the 5-vertical platform and community impact in Black-owned business vertical. Frame pre-revenue as early-stage growth, not weakness.',
+    checklist:['Research current cycle open date','Prepare 1-page executive summary','Draft community impact statement','Gather financial projections','Submit application'],
+    contacts:[{name:'FedEx Grants Team',role:'Grant Administration',phone:'1-800-463-3339',email:'smallbiz@fedex.com'}]
+  },
+  {
+    id:'intuit', name:'Intuit QuickBooks Small Business Hero', amount:'$20K/quarter', status:'Open through May 15, 2026',
+    desc:'Quarterly small business grant. Open now.',
+    what:'Quarterly $20K grant from Intuit QuickBooks for small business heroes. Q2 window open now through May 15.',
+    looking:['Active small business','Compelling growth story','QuickBooks user preferred'],
+    angle:'Position 3LG as a force multiplier for Black-owned businesses — the platform itself is the story.',
+    checklist:['Apply before May 15, 2026 deadline','Create/verify QuickBooks account','Write 500-word business story','Submit video pitch (optional but recommended)','Follow up after submission'],
+    contacts:[{name:'Intuit Grants',role:'Small Business Hero Program',phone:'—',email:'smallbizgrants@intuit.com'}]
+  },
+  {
+    id:'breva', name:'Breva Thrive Grant', amount:'$5K/quarter', status:'Q2 open NOW',
+    desc:'Quarterly grant cycle. Q2 window open April 1, 2026.',
+    what:'Quarterly $5K grant from Breva supporting thriving small businesses. Q2 cycle opened April 1, 2026.',
+    looking:['Small business owner','Clear use of funds','Growth trajectory'],
+    angle:'Short application — high ROI on time. Apply immediately. Use the real estate + tech angle.',
+    checklist:['Apply this week — Q2 window is open','Prepare 1-page use of funds','Submit online application','Set reminder for Q3 cycle (July 1)'],
+    contacts:[{name:'Breva Team',role:'Grant Program',phone:'—',email:'grants@breva.com'}]
+  },
+  {
+    id:'outta', name:'Outta Excuses Grant', amount:'$3K/quarter + $10K annual', status:'Active',
+    desc:'Recurring quarterly + annual prize pool.',
+    what:'Recurring grant program with $3K quarterly awards and a $10K annual prize pool for Black entrepreneurs.',
+    looking:['Black-owned business','Demonstrated hustle and execution','Community impact'],
+    angle:'This is built for you. Lead with the 5-vertical build, the real estate strategy, and the $475K funding target.',
+    checklist:['Register at outtaexcuses.com','Complete business profile','Submit quarterly application','Apply for annual prize pool separately'],
+    contacts:[{name:'Outta Excuses',role:'Grant Program',phone:'—',email:'grants@outtaexcuses.com'}]
+  },
+  {
+    id:'sba', name:'SBA SBIR Phase I', amount:'$150K', status:'90–120 day track',
+    desc:'AEO agent qualifies. Federal small business innovation research.',
+    what:'Federal SBIR Phase I grant — $150K for small businesses doing R&D with commercial potential. The 3LG AEO agent qualifies as an AI-driven innovation.',
+    looking:['Small business with innovative technology','R&D component with commercial application','US-based company'],
+    angle:'Position the AEO (Answer Engine Optimization) agent as the innovation. Federal money for AI-driven local business tools.',
+    checklist:['Register at SAM.gov (required)','Identify correct SBIR topic area','Prepare technical volume (15 pages)','Prepare commercialization plan','Submit via SBIR.gov portal'],
+    contacts:[{name:'SBA SBIR Office',role:'Program Administration',phone:'1-800-827-5722',email:'sbir@sba.gov'}]
+  },
+  {
+    id:'helloalice', name:'Hello Alice', amount:'Varies', status:'Register today',
+    desc:'Grant matching platform. Register profile, get matched.',
+    what:'Hello Alice is a grant matching platform that connects small business owners with grants, loans, and resources. Free to register.',
+    looking:['Small business owner','Complete business profile','Active business operations'],
+    angle:'Low effort, high upside. Register once, get matched to multiple grants automatically.',
+    checklist:['Register at helloalice.com','Complete full business profile','Connect financials for better matching','Check dashboard weekly for new matches'],
+    contacts:[{name:'Hello Alice',role:'Platform Support',phone:'—',email:'support@helloalice.com'}]
+  },
+  {
+    id:'urban', name:'Urban Impact Birmingham / PNC', amount:'TBD', status:'Warm intro path',
+    desc:'Call (205) 328-1850. Birmingham Black business pipeline.',
+    what:'Urban Impact Birmingham in partnership with PNC Bank provides capital and resources to Black-owned businesses in Birmingham. Warm intro path available.',
+    looking:['Birmingham-based Black-owned business','Community impact narrative','Growth plan'],
+    angle:'Local relationship play. Call first, build the relationship, then present the full 3LG platform vision.',
+    checklist:['Call (205) 328-1850 this week','Request intro meeting','Prepare 10-minute pitch deck','Follow up within 48 hours of meeting'],
+    contacts:[{name:'Urban Impact Birmingham',role:'Business Development',phone:'(205) 328-1850',email:'info@urbanimpactbirmingham.org'}]
+  },
+  {
+    id:'regions', name:'Regions Bank — Ronald Getteridge', amount:'TBD', status:'Warm contact',
+    desc:'Sit-down meeting. Second lien / down payment angle.',
+    what:'Regions Bank relationship with Ronald Getteridge. Second lien and down payment assistance angle for real estate acquisition. Jefferson County restriction flagged — awaiting confirmation on outside-county eligibility.',
+    looking:['Established banking relationship','Real estate acquisition plan','Income documentation'],
+    angle:'Second lien on real estate deal. $85K deal, $300K ARV, 68% LTV. Present the private lender pitch as the primary, Regions as the secondary.',
+    checklist:['Schedule sit-down meeting with Ronald Getteridge','Confirm Jefferson County restriction status','Prepare real estate deal summary','Bring private lender pitch deck','Discuss down payment assistance options'],
+    contacts:[{name:'Ronald Getteridge',role:'Regions Bank — Business Banking',phone:'—',email:'—'}]
+  },
+  {
+    id:'note', name:'Convertible Note', amount:'$150K–$250K', status:'Active raise',
+    desc:'Converts at Series A. Standard SAFE / convertible terms.',
+    what:'Active convertible note raise. $150K–$250K target. Converts to equity at Series A. Standard SAFE or convertible note terms.',
+    looking:['Accredited investors','Belief in the 3LG platform vision','Patient capital — Series A timeline'],
+    angle:'Lead with the 5-vertical platform, the $475K funding strategy, and the real estate income engine as proof of execution.',
+    checklist:['Finalize SAFE / convertible note terms','Engage securities attorney for documentation','Build investor pipeline (10 target names)','Prepare investor brief / deck','Begin outreach'],
+    contacts:[{name:'Norman Walton',role:'CEO & Co-Founder, 3 Levels of Game',phone:'—',email:'norman@3levelsofgame.com'}]
+  },
+  {
+    id:'terra', name:'TERRA Investor Brief', amount:'TBD', status:'Pitch ready',
+    desc:'Hardware + software product investor pitch.',
+    what:'TERRA is a hardware + software product within the 3LG ecosystem. Investor pitch is ready. Seeking strategic investors who understand the intersection of hardware, AI, and community impact.',
+    looking:['Strategic investors in hardware/software','Interest in AI-driven community tools','Patient capital'],
+    angle:'TERRA is the hardware play that anchors the 3LG software ecosystem. Lead with the product vision, then the platform.',
+    checklist:['Finalize TERRA investor brief','Identify 5 target investors','Request intro meetings','Prepare product demo','Follow up within 1 week of pitch'],
+    contacts:[{name:'Norman Walton',role:'CEO & Co-Founder, 3 Levels of Game',phone:'—',email:'norman@3levelsofgame.com'}]
+  }
+];
+
+// ── STATE ──
+let currentRenderer = 'docs';
+let generating = false;
+let editMode = false;
+let saveTimer = null;
+let bpHistory = [];
+let bpSending = false;
+let uploadedFile = null;
+let recognition = null;
+let isListening = false;
+let transcript = '';
+
+// ── RENDERER ACTIVATION ──
+function activateRenderer(key, el) {
+  // Close any open folder
+  document.querySelectorAll('.ws-panel').forEach(p => p.classList.remove('on'));
+  document.getElementById('panel-docs').classList.add('on');
+
+  // Update sidebar
+  document.querySelectorAll('.sb-btn').forEach(b => b.classList.remove('active'));
+  if (el) el.classList.add('active');
+
+  currentRenderer = key;
+  document.getElementById('renderer-badge').textContent = RENDERER_LABELS[key];
+  document.getElementById('toolbar-title').textContent = 'Document Creation Suite';
+  document.getElementById('type-area').placeholder = RENDERER_PLACEHOLDERS[key];
+
+  // Contract templates panel
+  document.getElementById('contract-templates').style.display = (key === 'contracts') ? 'block' : 'none';
+
+  // Restore last saved state
+  const saved = localStorage.getItem('hlg_active_renderer');
+  localStorage.setItem('hlg_active_renderer', key);
+
+  toast('Mode: ' + RENDERER_LABELS[key]);
+}
+
+// ── FOLDER NAVIGATION ──
+function openFolder(key, el) {
+  document.querySelectorAll('.ws-panel').forEach(p => p.classList.remove('on'));
+  const panel = document.getElementById('panel-' + key);
+  if (panel) panel.classList.add('on');
+
+  document.querySelectorAll('.sb-btn').forEach(b => b.classList.remove('active'));
+  if (el) el.classList.add('active');
+
+  const titles = {
+    funding: 'Funding Center',
+    realestate: 'Real Estate Strategy',
+    contractlib: 'Contract Library',
+    bizplan: 'Business Plan Builder'
+  };
+  document.getElementById('toolbar-title').textContent = titles[key] || key;
+}
+
+// ── INPUT TABS ──
+function switchInputTab(tab) {
+  document.querySelectorAll('.itab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.itab-body').forEach(b => b.classList.remove('on'));
+  document.getElementById('itab-' + tab).classList.add('on');
+  document.getElementById('body-' + tab).classList.add('on');
+}
+
+// ── GENERATE ──
+async function generate() {
+  if (generating) return;
+  const prompt = document.getElementById('type-area').value.trim();
+  const extra  = document.getElementById('extra-input').value.trim();
+  let fullPrompt = prompt;
+  if (extra) fullPrompt += '\n\nAdditional instruction: ' + extra;
+  if (uploadedFile) fullPrompt += '\n\nContext: User has uploaded a file named "' + uploadedFile + '".';
+  if (!fullPrompt.trim()) { toast('Add a prompt first', true); return; }
+
+  // Special renderers
+  if (currentRenderer === 'sheets') {
+    renderSheetPlaceholder();
+    return;
+  }
+  if (currentRenderer === 'slides' || currentRenderer === 'plan') {
+    renderGammaStub(fullPrompt);
+    return;
+  }
+
+  generating = true;
+  const btn = document.getElementById('gen-btn');
+  btn.textContent = 'GENERATING...';
+  btn.disabled = true;
+  setSaveStatus('saving');
+
+  // Add user message to conv history
+  addConvMsg('user', prompt.substring(0, 120) + (prompt.length > 120 ? '...' : ''));
+
+  // Clear doc canvas
+  const canvas = document.getElementById('doc-canvas');
+  document.getElementById('doc-empty').classList.add('hidden');
+  canvas.innerHTML = '<div style="color:#aaa;font-family:var(--mf);font-size:11px;letter-spacing:1px;padding:20px;text-align:center">Generating<span id="gen-dots">...</span></div>';
+
+  // Animate dots
+  let dots = 0;
+  const dotTimer = setInterval(() => {
+    const el = document.getElementById('gen-dots');
+    if (el) { dots = (dots + 1) % 4; el.textContent = '.'.repeat(dots + 1); }
+  }, 400);
+
+  try {
+    const res = await fetch(API_BASE + '/generate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': AUTH_HEADER
+      },
+      body: JSON.stringify({
+        model: ANTHROPIC_MODEL,
+        max_tokens: ANTHROPIC_MAX_TOKENS,
+        system: SYS[currentRenderer],
+        messages: [{ role: 'user', content: fullPrompt }]
+      })
+    });
+
+    clearInterval(dotTimer);
+
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error('API error ' + res.status + ': ' + errText.substring(0, 200));
+    }
+
+    const data = await res.json();
+    const html = data.content?.[0]?.text || '<p style="color:#CC0000">Generation failed — no content returned.</p>';
+
+    // Strip markdown fences if present
+    const clean = html.replace(/^```html\n?/i, '').replace(/\n?```$/i, '').trim();
+
+    canvas.innerHTML = clean;
+    addConvMsg('ai', 'Document generated — ' + RENDERER_LABELS[currentRenderer]);
+
+    // Auto-save
+    const docId = 'hlg_docs_' + Date.now();
+    localStorage.setItem(docId, clean);
+    localStorage.setItem('hlg_active_doc', docId);
+    persistToAirtable(docId, clean);
+    setSaveStatus('saved');
+    toast('Document generated');
+
+  } catch(e) {
+    clearInterval(dotTimer);
+    canvas.innerHTML = '<p style="color:#CC0000;font-family:var(--bf);padding:20px">Error: ' + e.message + '</p>';
+    setSaveStatus('err');
+    toast('Generation failed — ' + e.message.substring(0, 60), true);
+  }
+
+  generating = false;
+  btn.textContent = 'GENERATE';
+  btn.disabled = false;
+}
+
+function renderSheetPlaceholder() {
+  const canvas = document.getElementById('doc-canvas');
+  document.getElementById('doc-empty').classList.add('hidden');
+  canvas.innerHTML = `<div style="background:rgba(0,165,80,.06);border-left:4px solid #00A550;padding:20px 24px;border-radius:0 6px 6px 0;margin:20px 0;font-family:'DM Sans',sans-serif">
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:#00A550;margin-bottom:8px">3LG SHEETS</div>
+    <p style="color:#555;font-size:14px">Tool integration in queue. Use 3LG Docs for tabular content for now.</p>
+  </div>`;
+  toast('Sheets — integration coming soon');
+}
+
+function renderGammaStub(prompt) {
+  const canvas = document.getElementById('doc-canvas');
+  document.getElementById('doc-empty').classList.add('hidden');
+  canvas.innerHTML = `<div style="text-align:center;padding:40px 20px;font-family:'DM Sans',sans-serif">
+    <div style="font-size:36px;margin-bottom:16px">📽</div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:#00A550;margin-bottom:8px">Generating via 3LG Presentations Engine...</div>
+    <p style="color:#888;font-size:13px;margin-bottom:20px">Prompt: "${prompt.substring(0,100)}${prompt.length>100?'...':''}"</p>
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;color:#444;padding:10px;background:#f5f5f5;border-radius:4px;display:inline-block">GAMMA_API_URL — wire when ready</div>
+  </div>`;
+  toast('Presentations engine stub triggered');
+}
+
+// ── CONVERSATION HISTORY ──
+function addConvMsg(role, text) {
+  const hist = document.getElementById('conv-history');
+  const div = document.createElement('div');
+  div.className = role === 'user' ? 'msg-user' : 'msg-ai';
+  div.textContent = text;
+  hist.appendChild(div);
+  hist.scrollTop = hist.scrollHeight;
+}
+
+// ── EDIT MODE ──
+function toggleEdit() {
+  editMode = !editMode;
+  const canvas = document.getElementById('doc-canvas');
+  const btn = document.getElementById('edit-btn');
+  const toolbar = document.getElementById('edit-toolbar');
+  canvas.contentEditable = editMode ? 'true' : 'false';
+  btn.classList.toggle('active', editMode);
+  toolbar.classList.toggle('on', editMode);
+  if (editMode) canvas.focus();
+  toast(editMode ? 'Edit mode on — type directly in the document' : 'Edit mode off');
+}
+
+function fmt(cmd) { document.execCommand(cmd, false, null); }
+function fmtBlock(tag) { document.execCommand('formatBlock', false, tag); }
+
+// ── DOC CONTROLS ──
+function clearDoc() {
+  document.getElementById('type-area').value = '';
+  document.getElementById('extra-input').value = '';
+  const canvas = document.getElementById('doc-canvas');
+  canvas.innerHTML = '';
+  document.getElementById('doc-empty').classList.remove('hidden');
+  canvas.appendChild(document.getElementById('doc-empty'));
+  document.getElementById('conv-history').innerHTML = '';
+  if (editMode) toggleEdit();
+  toast('Cleared');
+}
+
+function copyDoc() {
+  const canvas = document.getElementById('doc-canvas');
+  const text = canvas.innerText;
+  if (!text.trim() || canvas.querySelector('#doc-empty:not(.hidden)')) { toast('Nothing to copy', true); return; }
+  navigator.clipboard.writeText(text).then(() => toast('Copied to clipboard'));
+}
+
+function exportDoc() {
+  const canvas = document.getElementById('doc-canvas');
+  if (!canvas.innerText.trim()) { toast('Nothing to export', true); return; }
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>3LG Document</title><link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Bebas+Neue&family=DM+Sans:wght@400;600&display=swap" rel="stylesheet"><style>body{font-family:'Lora',serif;font-size:15px;line-height:1.7;color:#111;max-width:816px;margin:40px auto;padding:40px 60px;}h1{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:2px;border-bottom:3px solid #CC0000;padding-bottom:10px;margin-bottom:20px;}h2{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1.5px;color:#00A550;margin:24px 0 8px;}table{width:100%;border-collapse:collapse;margin-bottom:18px;}th{background:#0A0A0A;color:#fff;padding:8px 12px;text-align:left;font-size:11px;}td{border:1px solid #e0e0e0;padding:8px 12px;}</style></head><body>${canvas.innerHTML}</body></html>`;
+  const a = document.createElement('a');
+  a.href = 'data:text/html;charset=utf-8,' + encodeURIComponent(html);
+  a.download = '3LG-' + RENDERER_LABELS[currentRenderer] + '-' + Date.now() + '.html';
+  a.click();
+  toast('Exported as HTML');
+}
+
+// ── SAVE STATUS ──
+function setSaveStatus(state) {
+  const el = document.getElementById('saveStatus');
+  el.className = '';
+  if (state === 'saving') { el.classList.add('saving'); el.textContent = 'SAVING...'; }
+  else if (state === 'saved') { el.textContent = 'SAVED'; setTimeout(() => { el.className=''; el.textContent='READY'; }, 2500); }
+  else if (state === 'err') { el.classList.add('err'); el.textContent = 'ERROR'; }
+  else { el.textContent = 'READY'; }
+}
+
+// Auto-save on canvas edit
+document.addEventListener('input', e => {
+  if (e.target.id === 'doc-canvas' && editMode) {
+    clearTimeout(saveTimer);
+    setSaveStatus('saving');
+    saveTimer = setTimeout(() => {
+      const docId = localStorage.getItem('hlg_active_doc') || 'hlg_docs_' + Date.now();
+      localStorage.setItem(docId, document.getElementById('doc-canvas').innerHTML);
+      localStorage.setItem('hlg_active_doc', docId);
+      persistToAirtable(docId, document.getElementById('doc-canvas').innerHTML);
+      setSaveStatus('saved');
+    }, 8000);
+  }
+});
+
+// ── SPEAK / VOICE ──
+function initSpeech() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    document.getElementById('speak-hint').textContent = 'Voice input requires Chrome or Edge.';
+    document.getElementById('mic-btn').disabled = true;
+    return;
+  }
+  recognition = new SR();
+  recognition.continuous = true;
+  recognition.interimResults = true;
+  recognition.lang = 'en-US';
+
+  let silenceTimer;
+  recognition.onresult = e => {
+    let interim = '', final = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      if (e.results[i].isFinal) final += e.results[i][0].transcript;
+      else interim += e.results[i][0].transcript;
+    }
+    if (final) transcript += final + ' ';
+    document.getElementById('transcript-display').textContent = transcript + interim;
+    clearTimeout(silenceTimer);
+    silenceTimer = setTimeout(() => { if (isListening && transcript.trim()) sendSpeak(); }, 2000);
+  };
+  recognition.onend = () => { if (isListening) recognition.start(); };
+  document.getElementById('speak-hint').textContent = 'Tap mic · Auto-sends after 2s silence';
+}
+
+function toggleMic() {
+  if (!recognition) { toast('Voice not supported in this browser', true); return; }
+  if (isListening) {
+    isListening = false;
+    recognition.stop();
+    document.getElementById('mic-btn').classList.remove('listening');
+    document.getElementById('mic-btn').textContent = '🎤';
+  } else {
+    isListening = true;
+    transcript = '';
+    document.getElementById('transcript-display').textContent = 'Listening...';
+    recognition.start();
+    document.getElementById('mic-btn').classList.add('listening');
+    document.getElementById('mic-btn').textContent = '⏹';
+  }
+}
+
+function sendSpeak() {
+  if (!transcript.trim()) { toast('No speech detected', true); return; }
+  isListening = false;
+  if (recognition) recognition.stop();
+  document.getElementById('mic-btn').classList.remove('listening');
+  document.getElementById('mic-btn').textContent = '🎤';
+  document.getElementById('type-area').value = transcript.trim();
+  switchInputTab('type');
+  generate();
+  transcript = '';
+}
+
+// ── FILE UPLOAD ──
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('drop-zone').classList.remove('over');
+  const f = e.dataTransfer.files[0];
+  if (f) processFile(f);
+}
+function handleFileSelect(e) {
+  const f = e.target.files[0];
+  if (f) processFile(f);
+}
+function processFile(f) {
+  uploadedFile = f.name;
+  const chip = document.getElementById('upload-chip');
+  chip.style.display = 'block';
+  chip.textContent = '📎 ' + f.name + ' — ready';
+  toast('File attached: ' + f.name);
+}
+
+// ── CONTRACT TEMPLATES ──
+function buildContractTemplates() {
+  const list = document.getElementById('ct-list');
+  list.innerHTML = CONTRACT_TEMPLATES.map((t, i) => `
+    <div onclick="loadContractTemplate(${i})" style="padding:8px 12px;cursor:pointer;border-bottom:1px solid var(--border);transition:background .1s;"
+         onmouseover="this.style.background='var(--green-dim)'" onmouseout="this.style.background='transparent'">
+      <div style="font-family:var(--mf);font-size:9px;letter-spacing:.5px;color:var(--text)">${t.name}</div>
+      <div style="font-family:var(--mf);font-size:7px;color:var(--muted);margin-top:2px">${t.price}</div>
+    </div>`).join('');
+}
+
+function loadContractTemplate(i) {
+  const t = CONTRACT_TEMPLATES[i];
+  document.getElementById('type-area').value = `Generate the ${t.name} for [BUSINESS NAME].
+Signatory: Norman Walton, CEO & Co-Founder, 3 Levels of Game.
+Address: [BUSINESS ADDRESS].
+Include standard terms, scope of work placeholder, payment terms,
+termination clause, and signature blocks.`;
+  toast('Template loaded: ' + t.name);
+}
+
+// ── FUNDING CENTER ──
+function buildFundingGrid() {
+  const grid = document.getElementById('funding-grid');
+  grid.innerHTML = FUNDING_DATA.map((f, i) => `
+    <div class="fc-card" onclick="openFundingDetail(${i})">
+      <div class="fc-amount">${f.amount}</div>
+      <div class="fc-name">${f.name}</div>
+      <div class="fc-status">${f.status}</div>
+      <div class="fc-desc">${f.desc}</div>
+      <div class="fc-cta">View Details →</div>
+    </div>`).join('');
+}
+
+function openFundingDetail(i) {
+  const f = FUNDING_DATA[i];
+  document.getElementById('fd-name').textContent = f.name;
+
+  const saved = JSON.parse(localStorage.getItem('hlg_funding_progress') || '{}');
+  const checks = f.checklist.map((item, ci) => `
+    <div class="fd-check-item">
+      <input type="checkbox" id="chk-${f.id}-${ci}" ${saved[f.id + '-' + ci] ? 'checked' : ''}
+             onchange="saveFundingCheck('${f.id}',${ci},this.checked)">
+      <label for="chk-${f.id}-${ci}">${item}</label>
+    </div>`).join('');
+
+  const contacts = f.contacts.map(c => `
+    <div style="margin-bottom:8px;padding:8px 10px;background:var(--bg4);border-radius:4px;border:1px solid var(--border)">
+      <div style="font-size:12px;font-weight:600;color:var(--text)">${c.name}</div>
+      <div style="font-family:var(--mf);font-size:8px;color:var(--muted);margin-top:2px">${c.role}</div>
+      ${c.phone !== '—' ? `<div style="font-family:var(--mf);font-size:9px;color:var(--green);margin-top:3px">📞 ${c.phone}</div>` : ''}
+      ${c.email !== '—' ? `<div style="font-family:var(--mf);font-size:9px;color:var(--green);margin-top:2px">✉ ${c.email}</div>` : ''}
+    </div>`).join('');
+
+  document.getElementById('fd-body').innerHTML = `
+    <span class="fd-badge amount">${f.amount}</span>
+    <span class="fd-badge status">${f.status}</span>
+    <div class="fd-section">What It Is</div>
+    <div class="fd-text">${f.what}</div>
+    <div class="fd-section">What They're Looking For</div>
+    <ul class="fd-list">${f.looking.map(l => `<li>${l}</li>`).join('')}</ul>
+    <div class="fd-section">How to Present 3LG</div>
+    <div class="fd-text">${f.angle}</div>
+    <div class="fd-section">Action Checklist</div>
+    ${checks}
+    <div class="fd-section">Contacts</div>
+    ${contacts}
+    <button class="fd-draft-btn" onclick="draftApplication('${f.id}')">Draft Application →</button>
+  `;
+
+  document.getElementById('funding-detail').classList.add('open');
+}
+
+function closeFundingDetail() {
+  document.getElementById('funding-detail').classList.remove('open');
+}
+
+function saveFundingCheck(funderId, idx, checked) {
+  const saved = JSON.parse(localStorage.getItem('hlg_funding_progress') || '{}');
+  saved[funderId + '-' + idx] = checked;
+  localStorage.setItem('hlg_funding_progress', JSON.stringify(saved));
+  updateAppsSubmitted();
+}
+
+function updateAppsSubmitted() {
+  const saved = JSON.parse(localStorage.getItem('hlg_funding_progress') || '{}');
+  const count = Object.values(saved).filter(Boolean).length;
+  document.getElementById('apps-submitted').textContent = count;
+}
+
+async function draftApplication(funderId) {
+  const f = FUNDING_DATA.find(x => x.id === funderId);
+  if (!f) return;
+  closeFundingDetail();
+  activateRenderer('docs', document.getElementById('sb-docs'));
+  document.getElementById('type-area').value = `Draft a grant/funding application for ${f.name}.
+Amount: ${f.amount}
+Applicant: Norman Walton, CEO & Co-Founder, 3 Levels of Game
+Business: 3 Levels of Game — complete Business Management System platform serving 5 verticals (Home Services, Real Estate, Black-Owned Businesses, E-Commerce, Food & Water). Alabama-based, pre-revenue, actively building.
+What they're looking for: ${f.looking.join(', ')}
+Angle: ${f.angle}
+Include: executive summary, business description, use of funds, community impact, and a compelling narrative.`;
+  toast('Prompt loaded — hit GENERATE to draft');
+}
+
+function openMasterStrategy() {
+  activateRenderer('docs', document.getElementById('sb-docs'));
+  document.getElementById('type-area').value = `Create a master funding strategy document for 3 Levels of Game.
+Target: $475K+ across 10 funding sources.
+Business: Norman Walton, CEO & Co-Founder, 3 Levels of Game — complete BMS platform, 5 verticals, Alabama-based, pre-revenue.
+Include: executive summary, all 10 funding sources with amounts and timelines, prioritized action plan, 90-day calendar, and key contacts.`;
+  toast('Master strategy prompt loaded — hit GENERATE');
+}
+
+// ── REAL ESTATE ──
+function buildRealEstate() {
+  document.getElementById('re-body').innerHTML = `
+    <div class="re-block">
+      <div class="re-block-title">PRIMARY — THREE INCOME MODELS</div>
+      <div class="re-model">
+        <div class="re-model-name">Model 1 — Airbnb / Short-Term Rental</div>
+        <div class="re-row">
+          <span class="re-tag">Catalyst: West Rock Mountain Nature Preserve (opened 2026)</span>
+        </div>
+        <div class="re-row">
+          <span class="re-tag">Tenant: Hikers, leisure travelers, Birmingham overflow</span>
+          <span class="re-tag">Avg stay: 2–5 nights</span>
+        </div>
+        <div class="re-row">
+          <span class="re-tag green">Revenue: $1,500–$2,500/mo per property</span>
+          <span class="re-tag">Platforms: Airbnb, VRBO</span>
+        </div>
+      </div>
+      <div class="re-model">
+        <div class="re-model-name">Model 2 — Furnished Finder / Mid-Term Rental</div>
+        <div class="re-row">
+          <span class="re-tag">Catalyst: UAB Medical West (5000 Medical West Way, Bessemer)</span>
+        </div>
+        <div class="re-row">
+          <span class="re-tag">Tenant: Travel nurses, rotating physicians, medical residents</span>
+          <span class="re-tag">Avg stay: 13 weeks</span>
+        </div>
+        <div class="re-row">
+          <span class="re-tag green">Revenue: $1,500–$2,500/mo all-inclusive per property</span>
+          <span class="re-tag">Platforms: Furnished Finder, Airbnb extended, Transplant Housing</span>
+        </div>
+      </div>
+      <div class="re-model">
+        <div class="re-model-name">Model 3 — Airbnb Management (homes you don't buy)</div>
+        <div class="re-row">
+          <span class="re-tag">Tenant: Distressed homeowners who don't want to sell</span>
+          <span class="re-tag green">Revenue: $250+/mo management fee per door</span>
+        </div>
+        <div class="re-row">
+          <span class="re-tag">Acquisition cost: $0</span>
+          <span class="re-tag">Bonus: First right of refusal to purchase</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="re-block">
+      <div class="re-block-title">SECONDARY STRATEGIES</div>
+      <div class="re-row" style="flex-wrap:wrap;gap:8px">
+        <span class="re-tag">BRRRR cycle (ongoing)</span>
+        <span class="re-tag">Daycare facility conversion</span>
+        <span class="re-tag">Elderly / assisted living facility conversion</span>
+      </div>
+    </div>
+
+    <div class="re-block">
+      <div class="re-block-title">ACQUISITION ENGINE</div>
+      <div class="re-row" style="flex-direction:column;gap:6px;align-items:flex-start">
+        <div class="re-tag">🚪 Door approach — 10 doors/week, every conversation logged in CRM</div>
+        <div class="re-tag">🎯 3LG Outbound Engine — Apollo list: absentee owners, tax delinquent, pre-foreclosure, inherited (zips 35023, 35020)</div>
+        <div class="re-tag">📱 SMS + email sequences — "We Manage Your Airbnb" + "We Buy Houses in Hueytown" simultaneous</div>
+        <div class="re-tag">📋 Motivated seller form live at Hueytown landing page</div>
+        <div class="re-tag">💰 HML to STR conversion flow armed</div>
+      </div>
+    </div>
+
+    <div class="re-grid">
+      <div class="re-card">
+        <div class="re-card-title">Private Lender Pitch — Ready</div>
+        <div class="re-card-body">
+          <strong>$85K Deal</strong><br>
+          $85K loan · $300K ARV<br>
+          15% interest-only<br>
+          $1,062/mo to lender<br>
+          Lender earns $12,750/yr<br>
+          LTV: 68%<br>
+          Secured by real estate · Collateral improving during loan
+        </div>
+      </div>
+      <div class="re-card">
+        <div class="re-card-title">Regions Bank · Ronald Getteridge</div>
+        <div class="re-card-body">
+          Second lien / down payment assistance angle<br><br>
+          Jefferson County restriction flagged<br>
+          Awaiting confirmation on outside-county eligibility
+        </div>
+      </div>
+    </div>
+
+    <div class="re-block" style="margin-top:16px">
+      <div class="re-block-title">Catalyst Stack</div>
+      <div class="re-row" style="flex-wrap:wrap;gap:8px">
+        <span class="re-tag green">West Rock Mountain Nature Preserve — opened 2026</span>
+        <span class="re-tag green">UAB Medical West — open and operating</span>
+        <span class="re-tag">Chick-fil-A — breaks ground fall 2026</span>
+        <span class="re-tag">Remaining UA land — selling next</span>
+      </div>
+    </div>
+
+    <button class="re-open-btn" onclick="openREStrategy()">Open Full Strategy in Notebook</button>
+  `;
+}
+
+function openREStrategy() {
+  activateRenderer('docs', document.getElementById('sb-docs'));
+  document.getElementById('type-area').value = `Create a comprehensive real estate strategy document for Norman Walton, 3 Levels of Game.
+Market: Hueytown, AL — zips 35023 / 35020
+Three income models: (1) Airbnb STR via West Rock Mountain catalyst, (2) Mid-term rental via UAB Medical West catalyst, (3) Airbnb management of homes Norman doesn't buy.
+Include: executive summary, all three income models with projections, acquisition engine strategy, private lender pitch ($85K deal, $300K ARV, 68% LTV), catalyst stack analysis, and 90-day action plan.`;
+  toast('Real estate strategy prompt loaded — hit GENERATE');
+}
+
+// ── CONTRACT LIBRARY ──
+function buildContractLibrary() {
+  const tiers = [
+    { name:'Foundation Agreement',       tier:'Starter',         price:'$250/mo + $500 setup',  min:'3-month minimum' },
+    { name:'Lay Up Drill Agreement',      tier:'Growth',          price:'$500/mo + $500 setup',  min:'3-month minimum' },
+    { name:'Game Time Agreement',         tier:'Pro',             price:'$750/mo + $500 setup',  min:'3-month minimum' },
+    { name:'Elite Agreement',             tier:'Elite',           price:'$1,000/mo + $500 setup',min:'3-month minimum' },
+    { name:'Founding Member Agreement',   tier:'Founding Member', price:'$250/mo locked for life',min:'First 100 clients' },
+    { name:'Agency Licensing Agreement',  tier:'Agency',          price:'$2,500 cert + $1,500/mo',min:'' },
+    { name:'Non-Disclosure Agreement',    tier:'NDA',             price:'With explicit consent section',min:'' }
+  ];
+  document.getElementById('cl-grid').innerHTML = tiers.map((t, i) => `
+    <div class="cl-tile" onclick="openContractFromLib(${i})">
+      <div class="cl-tier">${t.tier}</div>
+      <div class="cl-name">${t.name}</div>
+      <div class="cl-price">${t.price}${t.min ? ' · ' + t.min : ''}</div>
+      <div class="cl-open">Open in Contracts →</div>
+    </div>`).join('');
+}
+
+function openContractFromLib(i) {
+  activateRenderer('contracts', document.getElementById('sb-contracts'));
+  loadContractTemplate(i);
+  toast('Template loaded — hit GENERATE to create contract');
+}
+
+// ── BUSINESS PLAN BUILDER ──
+function initBizPlan() {
+  const chat = document.getElementById('bp-chat');
+  if (chat.children.length > 0) return; // already initialized
+
+  const history = JSON.parse(localStorage.getItem('hlg_bp_history') || '[]');
+  if (history.length > 0) {
+    bpHistory = history;
+    history.forEach(m => {
+      const div = document.createElement('div');
+      div.className = m.role === 'user' ? 'bp-msg-user' : 'bp-msg-ai';
+      div.textContent = m.content;
+      chat.appendChild(div);
+    });
+    chat.scrollTop = chat.scrollHeight;
+  } else {
+    const opening = `Welcome, Norman. I already know your context — Hueytown AL market, three income models, $475K funding target, 5-vertical 3LG platform, TERRA, Reserve Lounge.\n\nTell me what this plan is for — investor pitch, grant application, or your own strategic document — and we'll build it.`;
+    const div = document.createElement('div');
+    div.className = 'bp-msg-ai';
+    div.textContent = opening;
+    chat.appendChild(div);
+    bpHistory.push({ role: 'assistant', content: opening });
+  }
+}
+
+async function bpSend() {
+  if (bpSending) return;
+  const ta = document.getElementById('bp-textarea');
+  const msg = ta.value.trim();
+  if (!msg) return;
+
+  ta.value = '';
+  ta.style.height = 'auto';
+  bpSending = true;
+  document.getElementById('bp-send').disabled = true;
+
+  const chat = document.getElementById('bp-chat');
+  const userDiv = document.createElement('div');
+  userDiv.className = 'bp-msg-user';
+  userDiv.textContent = msg;
+  chat.appendChild(userDiv);
+  chat.scrollTop = chat.scrollHeight;
+
+  bpHistory.push({ role: 'user', content: msg });
+  if (bpHistory.length > 30) bpHistory = bpHistory.slice(-30);
+
+  const thinkingDiv = document.createElement('div');
+  thinkingDiv.className = 'bp-msg-ai';
+  thinkingDiv.textContent = '...';
+  chat.appendChild(thinkingDiv);
+  chat.scrollTop = chat.scrollHeight;
+
+  const BP_SYSTEM = `You are the 3LG Business Plan Builder agent. Coach Nick / Norman Walton is the founder. Context: 3 Levels of Game — complete BMS platform serving 5 verticals (Home Services, Real Estate, Black-Owned Businesses, E-Commerce, Food & Water). Alabama-based, pre-revenue, 5 verticals actively building, $475K funding target across 10 sources.
+
+Real estate context: Hueytown AL (zips 35023/35020), three income models (Airbnb STR via West Rock catalyst, mid-term rental via UAB Medical West catalyst, Airbnb management of homes Norman doesn't buy).
+
+Your job: ask focused follow-up questions one at a time. Build toward a complete plan. Don't overwhelm. When the user says "done" — compile the full plan in clean structure: Executive Summary, Market, Strategy, Financials, Funding Ask, Timeline.`;
+
+  try {
+    const res = await fetch(API_BASE + '/generate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': AUTH_HEADER
+      },
+      body: JSON.stringify({
+        model: ANTHROPIC_MODEL,
+        max_tokens: 1000,
+        system: BP_SYSTEM,
+        messages: bpHistory.filter(m => m.role !== 'system')
+      })
+    });
+
+    if (!res.ok) throw new Error('API error ' + res.status);
+    const data = await res.json();
+    const reply = data.content?.[0]?.text || 'Sorry, I had trouble responding. Try again.';
+
+    thinkingDiv.textContent = reply;
+    bpHistory.push({ role: 'assistant', content: reply });
+    if (bpHistory.length > 30) bpHistory = bpHistory.slice(-30);
+    localStorage.setItem('hlg_bp_history', JSON.stringify(bpHistory));
+
+    // If done, offer to open in notebook
+    if (msg.toLowerCase().includes('done')) {
+      const openBtn = document.createElement('button');
+      openBtn.style.cssText = 'margin-top:10px;background:var(--green);color:#000;border:none;border-radius:4px;padding:8px 16px;font-family:var(--mf);font-size:9px;font-weight:600;letter-spacing:1px;cursor:pointer;text-transform:uppercase;display:block;';
+      openBtn.textContent = 'Open in Notebook';
+      openBtn.onclick = () => {
+        activateRenderer('docs', document.getElementById('sb-docs'));
+        document.getElementById('doc-canvas').innerHTML = '<h1>Business Plan</h1>' + reply.replace(/\n/g, '<br>');
+        document.getElementById('doc-empty').classList.add('hidden');
+        toast('Plan opened in notebook');
+      };
+      thinkingDiv.appendChild(openBtn);
+    }
+
+  } catch(e) {
+    thinkingDiv.textContent = 'Connection error — ' + e.message;
+  }
+
+  chat.scrollTop = chat.scrollHeight;
+  bpSending = false;
+  document.getElementById('bp-send').disabled = false;
+}
+
+// ── YOUTUBE / AMBIENT ──
+const CHANNELS = {
+  nature: [
+    'L0emkyxTkLs','mm_zUITQoPQ','QgkewKlWPGU','SOsYmcdFOgA','Y78bVLO2sH4'
+  ],
+  calm: [
+    'aWU2J9OuOIs','orXEZdGmOK8','PC1oh2f4nZo','YqWM9HZR9iM'
+  ]
+};
+
+function switchChannel(ch, el) {
+  document.querySelectorAll('.vid-btn').forEach(b => b.classList.remove('on'));
+  if (el) el.classList.add('on');
+  if (ch === 'none') {
+    document.getElementById('yt-player').src = 'about:blank';
+    return;
+  }
+  const list = CHANNELS[ch];
+  const id = list[Math.floor(Math.random() * list.length)];
+  document.getElementById('yt-player').src = `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=0&showinfo=0&rel=0&modestbranding=1`;
+}
+
+function playCustom() {
+  const url = document.getElementById('vid-url-input').value.trim();
+  if (!url) { toast('Paste a YouTube URL', true); return; }
+  const m = url.match(/(?:v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  if (!m) { toast('Invalid YouTube URL', true); return; }
+  document.querySelectorAll('.vid-btn').forEach(b => b.classList.remove('on'));
+  document.getElementById('yt-player').src = `https://www.youtube.com/embed/${m[1]}?autoplay=1&mute=0&loop=1&playlist=${m[1]}&controls=1&showinfo=0&rel=0&modestbranding=1`;
+  toast('Playing custom video');
+}
+
+// ── TOAST ──
+let toastTimer;
+function toast(msg, err) {
+  const t = document.getElementById('toast');
+  clearTimeout(toastTimer);
+  t.textContent = (err ? '⚠ ' : '✓ ') + msg;
+  t.className = 'toast' + (err ? ' err' : '');
+  t.classList.add('show');
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ── KEYBOARD SHORTCUTS ──
+document.addEventListener('keydown', e => {
+  const ctrl = e.ctrlKey || e.metaKey;
+  if (ctrl && e.key === 'Enter') { e.preventDefault(); generate(); }
+  if (ctrl && e.key === 's')     { e.preventDefault(); manualSave(); }
+  if (ctrl && e.key === 'e')     { e.preventDefault(); toggleEdit(); }
+  if (ctrl && e.key === 'k')     { e.preventDefault(); clearDoc(); }
+  if (e.key === 'Escape')        { closeFundingDetail(); }
+});
+
+function manualSave() {
+  const canvas = document.getElementById('doc-canvas');
+  if (!canvas.innerText.trim()) { toast('Nothing to save', true); return; }
+  const docId = localStorage.getItem('hlg_active_doc') || 'hlg_docs_' + Date.now();
+  localStorage.setItem(docId, canvas.innerHTML);
+  localStorage.setItem('hlg_active_doc', docId);
+  persistToAirtable(docId, canvas.innerHTML);
+  setSaveStatus('saved');
+  toast('Saved');
+}
+
+// ── INIT ──
+function init() {
+  buildFundingGrid();
+  buildRealEstate();
+  buildContractLibrary();
+  buildContractTemplates();
+  initSpeech();
+  updateAppsSubmitted();
+
+  // Restore last renderer
+  const lastRenderer = localStorage.getItem('hlg_active_renderer');
+  if (lastRenderer && RENDERER_LABELS[lastRenderer]) {
+    activateRenderer(lastRenderer, document.getElementById('sb-' + lastRenderer));
+  }
+
+  // Restore last doc
+  const lastDocId = localStorage.getItem('hlg_active_doc');
+  if (lastDocId) {
+    const saved = localStorage.getItem(lastDocId);
+    if (saved) {
+      document.getElementById('doc-canvas').innerHTML = saved;
+      document.getElementById('doc-empty').classList.add('hidden');
+    }
+  }
+
+  // Init bizplan when its panel is opened
+  document.getElementById('sb-bizplan').addEventListener('click', () => {
+    setTimeout(initBizPlan, 50);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
